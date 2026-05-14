@@ -15,14 +15,14 @@ Objective: Compare multiple machine learning classifiers to establish a performa
 ## 2) Data Preprocessing
 The raw Telco Customer Churn dataset contains mixed data types requiring preprocessing before model training. The following transformations were applied:
 
-| Step | Transformation | Details |
-|------|---------------|---------|
-| **Drop identifier** | Remove `customerID` | Unique per customer; no predictive value |
-| **Target encoding** | `Churn`: Yes → 1, No → 0 | Binary classification requires numeric labels |
-| **Binary encoding** | `gender`: Female → 0, Male → 1; `Partner`, `Dependents`, `PhoneService`, `PaperlessBilling`: Yes/No → 1/0 | Simple binary categorical features |
-| **Multi-class encoding** | `MultipleLines`, `InternetService`, `OnlineSecurity`, `OnlineBackup`, `DeviceProtection`, `TechSupport`, `StreamingTV`, `StreamingMovies`, `Contract`, `PaymentMethod` | Converted to integer codes (0, 1, 2, ...) preserving categorical information |
-| **Numeric conversion** | `TotalCharges`: string → float | Original format stored as object due to empty strings; coerced errors to NaN and imputed |
-| **Feature scaling** | `StandardScaler` applied to `tenure`, `MonthlyCharges`, `TotalCharges` | Required for distance-based algorithms (SVC, LogisticRegression, KNN, Ridge) .org |
+| Step                     | Transformation                                                                                                                                                         | Details                                                                                  |
+|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| **Drop identifier**      | Remove `customerID`                                                                                                                                                    | Unique per customer; no predictive value                                                 |
+| **Target encoding**      | `Churn`: Yes → 1, No → 0                                                                                                                                               | Binary classification requires numeric labels                                            |
+| **Binary encoding**      | `gender`: Female → 0, Male → 1; `Partner`, `Dependents`, `PhoneService`, `PaperlessBilling`: Yes/No → 1/0                                                              | Simple binary categorical features                                                       |
+| **Multi-class encoding** | `MultipleLines`, `InternetService`, `OnlineSecurity`, `OnlineBackup`, `DeviceProtection`, `TechSupport`, `StreamingTV`, `StreamingMovies`, `Contract`, `PaymentMethod` | Converted to integer codes (0, 1, 2, ...) preserving categorical information             |
+| **Numeric conversion**   | `TotalCharges`: string → float                                                                                                                                         | Original format stored as object due to empty strings; coerced errors to NaN and imputed |
+| **Feature scaling**      | `StandardScaler` applied to `tenure`, `MonthlyCharges`, `TotalCharges`                                                                                                 | Required for distance-based algorithms (SVC, LogisticRegression, KNN, Ridge) .org        |
 
 ## 3) Baseline Model Comparison
 
@@ -31,14 +31,20 @@ The raw Telco Customer Churn dataset contains mixed data types requiring preproc
 ![baseline_model_comparison.png](figures/baseline_model_comparison.png)
 
 ### Key Findings
-| - | Finding                          | Interpretation                                                                                                                                                                                                                |
-|---|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | Narrow Performance gap           | Only 4.6% separates the best and worst classifiers in terms of the accuracy score. This means that the dataset is moderately difficult with no single algorithm achieving dominant performance                                |
-| 2 | Linear models preformed the best | Top 3 performers (LDA, LogisticRegression, Ridge) all use linear decision boundaries, indicating that churn prediction can be effectively modeled as a weighted sum of feature contributions rather than complex interactions |
-| 3 | Tree-based models underperformed | DecisionTree, RandomForest, and GradientBoosting had lower accuracy compared to linear models, suggesting that the dataset may not have strong non-linear relationships or that default parameters were not optimal for these algorithms |
-| 4 | Scaling was essential | SVC, LogisticRegression, KNN, and Ridge all require feature scaling to perform well. The significant improvement in their performance after standardization highlights the importance of preprocessing for distance-based and regularized models. | 
-| 5 | Naive Bayes and KNN struggled | GaussianNB's independence assumption is violated by correlated binary features; KNN's distance metric is less meaningful in high-dimensional binary spaces |
+| - | Finding                          | Interpretation                                                                                                                                                                                                                                    |
+|---|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Narrow Performance gap           | Only 4.6% separates the best and worst classifiers in terms of the accuracy score. This means that the dataset is moderately difficult with no single algorithm achieving dominant performance                                                    |
+| 2 | Linear models preformed the best | Top 3 performers (LDA, LogisticRegression, Ridge) all use linear decision boundaries, indicating that churn prediction can be effectively modeled as a weighted sum of feature contributions rather than complex interactions                     |
+| 3 | Tree-based models underperformed | DecisionTree, RandomForest, and GradientBoosting had lower accuracy compared to linear models, suggesting that the dataset may not have strong non-linear relationships or that default parameters were not optimal for these algorithms          |
+| 4 | Scaling was essential            | SVC, LogisticRegression, KNN, and Ridge all require feature scaling to perform well. The significant improvement in their performance after standardization highlights the importance of preprocessing for distance-based and regularized models. | 
+| 5 | Naive Bayes and KNN struggled    | GaussianNB's independence assumption is violated by correlated binary features; KNN's distance metric is less meaningful in high-dimensional binary spaces                                                                                        |
 
 The Telco dataset's preprocessing produced mostly binary features and a few one hot encoded categorical features, which may explain why linear models performed better than tree-based models. The lack of strong non-linear relationships and the presence of many binary features likely favored algorithms that can effectively model linear decision boundaries.
 
-## 4) 
+## 4) Hyperparameter Optimization
+
+| - | **Model**           | **Best Parameters**                                                                  | Baseline Accuracy | Optimized Accuracy | Notes                                                               |
+|---|---------------------|--------------------------------------------------------------------------------------|-------------------|--------------------|---------------------------------------------------------------------|
+| 1 | LDA                 | {'solver': 'svd'}                                                                    | 0.8183            | 0.8183             | No improvement; default parameters already optimal for this dataset |
+| 2 | Logistic Regression | {'C': 0.01, 'class_weight': None, 'l1_ratio': 0, 'solver': 'saga'}                   | 0.8176            | 0.8204             | -                                                                   |
+| 3 | Gradient Boosting   | {'learning_rate': 0.05, 'max_depth': 3, 'min_samples_split': 2, 'n_estimators': 200} | 0.8091            | 0.8062             | -                                                                   |
