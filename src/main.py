@@ -18,13 +18,14 @@ nearest_neighbors = 5
 hidden_layer_sizes = (100,)
 
 df = pd.read_csv('../data/prepared_data.csv')
+
 # Split features into train and test features
 y = df['Churn']
 X = df.drop(['Churn'], axis=1)
 
-# Train-test split
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=random_state)
 
+# S
 models = [
     RandomForestClassifier(random_state=random_state),
     GradientBoostingClassifier(random_state=random_state),
