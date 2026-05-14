@@ -40,3 +40,5 @@ The raw Telco Customer Churn dataset contains mixed data types requiring preproc
 | 5 | Naive Bayes and KNN struggled | GaussianNB's independence assumption is violated by correlated binary features; KNN's distance metric is less meaningful in high-dimensional binary spaces |
 
 The Telco dataset's preprocessing produced mostly binary features and a few one hot encoded categorical features, which may explain why linear models performed better than tree-based models. The lack of strong non-linear relationships and the presence of many binary features likely favored algorithms that can effectively model linear decision boundaries.
+
+## 4) 
