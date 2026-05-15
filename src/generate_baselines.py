@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
 from sklearn.ensemble import GradientBoostingClassifier, HistGradientBoostingClassifier, RandomForestClassifier
 from sklearn.linear_model import LogisticRegression, RidgeClassifier
-from sklearn.metrics import accuracy_score
+from sklearn.metrics import f1_score
 from sklearn.model_selection import train_test_split
 from sklearn.naive_bayes import GaussianNB
 from sklearn.neighbors import KNeighborsClassifier
@@ -17,6 +17,8 @@ random_state = 42
 max_iter = 1000
 num_nearest_neighbors = 5
 hidden_layer_sizes = (100,)
+
+readme_filepath = '../README.md'
 
 df = pd.read_csv('../data/prepared_data.csv')
 
@@ -53,9 +55,9 @@ scores = []
 # Train and Test each model
 for model, label in zip(models, model_labels):
     model.fit(X_train, y_train)
-    scores.append(accuracy_score(y_test, model.predict(X_test)))
+    scores.append(f1_score(y_test, model.predict(X_test)))
 
-# Creat a bar graph of the models
+'''# Creat a bar graph of the models
 plt.bar(model_labels, scores)
 plt.ylim(0.76, 0.83)
 plt.xticks(model_labels)
@@ -68,12 +70,21 @@ plt.tight_layout()
 
 # Save the results from the bar graph
 plt.savefig('../figures/baseline_model_comparison.png')
-plt.show()
+plt.show()'''
 
 # Sort and print out the results
-print('\nModel Accuracy Scores:')
+print('\nModel F1 Scores:')
 
 results = sorted(zip(model_labels, scores), key=lambda x: x[1], reverse=True)
 for label, score in results:
     print(f'{label}: {score}')
 
+
+df = pd.DataFrame(results, columns=['Model', 'Score'], index=range(1, len(results) + 1))
+table_md = df.to_markdown(index=False)
+
+with open(readme_filepath, 'r') as f:
+    content = f.read()
+
+with open(readme_filepath, 'w') as f:
+    f.write(content.replace('<!-- INSERT_BASELINE_TABLE -->', table_md))

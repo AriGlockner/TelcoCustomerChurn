@@ -26,18 +26,27 @@ The raw Telco Customer Churn dataset contains mixed data types requiring preproc
 
 ## 3) Baseline Model Comparison
 
-10 classifiers from scikit-learn were evaluated using default parameters with standardized preprocessing where appropriate:
+10 classifiers from scikit-learn were evaluated using default parameters with standardized preprocessing where appropriate. The F1 score metric was used for model comparison due to the imbalanced nature of the dataset. The results are summarized in the table below:
 
-![baseline_model_comparison.png](figures/baseline_model_comparison.png)
+|    | Model                |    Score |
+|---:|:---------------------|---------:|
+|  0 | GaussianNB           | 0.648588 |
+|  1 | LDA                  | 0.628986 |
+|  2 | LogisticRegression   | 0.626996 |
+|  3 | Ridge                | 0.603369 |
+|  4 | GradientBoosting     | 0.599106 |
+|  5 | HistGradientBoosting | 0.584071 |
+|  6 | SVC                  | 0.580343 |
+|  7 | MLP                  | 0.568421 |
+|  8 | RandomForest         | 0.560250 |
+|  9 | KNN                  | 0.544681 |
 
-### Key Findings
-| - | Finding                          | Interpretation                                                                                                                                                                                                                                    |
-|---|----------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| 1 | Narrow Performance gap           | Only 4.6% separates the best and worst classifiers in terms of the accuracy score. This means that the dataset is moderately difficult with no single algorithm achieving dominant performance                                                    |
-| 2 | Linear models preformed the best | Top 3 performers (LDA, LogisticRegression, Ridge) all use linear decision boundaries, indicating that churn prediction can be effectively modeled as a weighted sum of feature contributions rather than complex interactions                     |
-| 3 | Tree-based models underperformed | DecisionTree, RandomForest, and GradientBoosting had lower accuracy compared to linear models, suggesting that the dataset may not have strong non-linear relationships or that default parameters were not optimal for these algorithms          |
-| 4 | Scaling was essential            | SVC, LogisticRegression, KNN, and Ridge all require feature scaling to perform well. The significant improvement in their performance after standardization highlights the importance of preprocessing for distance-based and regularized models. | 
-| 5 | Naive Bayes and KNN struggled    | GaussianNB's independence assumption is violated by correlated binary features; KNN's distance metric is less meaningful in high-dimensional binary spaces                                                                                        |
+Table directly generated from the src/generate_baselines.py script
+
+### TODO: Key Findings
+| - | Finding                          | Interpretation                                                                                                                                                                                                    |
+|---|----------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 1 | Top Performers                   | GaussianNB, LDA, Logistic Regression, and Ridge Regression were the top-performing models with F1 scores above 0.60. These linear models outperformed tree-based models like Gradient Boosting and Random Forest. |
 
 The Telco dataset's preprocessing produced mostly binary features and a few one hot encoded categorical features, which may explain why linear models performed better than tree-based models. The lack of strong non-linear relationships and the presence of many binary features likely favored algorithms that can effectively model linear decision boundaries.
 
